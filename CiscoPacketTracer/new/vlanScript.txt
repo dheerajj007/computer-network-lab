@@ -1,0 +1,65 @@
+-------------------------------------switch A
+
+config t
+
+hostname a
+
+vlan 10
+name academics
+
+vlan 20
+name accounts
+
+vlan 30
+name office
+
+int f0/1
+switchport mode access
+switchport access vlan 10
+
+int f0/2
+switchport mode access
+switchport access vlan 20
+
+int f0/3
+switchport mode access
+switchport access vlan 30
+
+int f0/4
+switchport mode trunk
+
+
+
+-------------------------------------------switch B
+
+
+config t
+
+hostname b
+
+vlan 10
+name academics
+
+vlan 20
+name accounts
+
+vlan 30
+name office
+
+int f0/2
+switchport mode access
+switchport access vlan 10
+
+int f0/3
+switchport mode access
+switchport access vlan 20
+
+int f0/4
+switchport mode access
+switchport access vlan 30
+
+int f0/1
+switchport mode trunk
+
+
+

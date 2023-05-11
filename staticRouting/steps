@@ -1,0 +1,23 @@
+1. Place Routers from Network Devices > Routers > 4331
+
+2. Place the pcs
+
+3. Connect all hosts physically, and accordingly.
+
+4. Congifure the routers using scripts given
+
+5. Configure the pcs
+
+For PC0.
+
+IP Address : 192.168.1.2
+Netmask : 255.255.255.0
+Gateway : 192.168.1.1
+
+For PC1.
+
+IP Address : 192.168.2.2
+Netmask : 255.255.255.0
+Gateway : 192.168.2.1
+
+6. Ping test between the two PCs.

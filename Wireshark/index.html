@@ -1,39 +1,38 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Feature File Generator</title>
+    <title>Account Feature File Generator</title>
+    <script src="script.js"></script>
   </head>
   <body>
-    <h1>Feature File Generator</h1>
+    <h1>Account Feature File Generator</h1>
     <form id="featureForm">
       <div id="accountInputs">
         <div class="accountInput">
-          <h3>Account Details</h3>
-          <label for="accountName">Account Name:</label>
-          <input type="text" name="accountName" required /><br /><br />
-
-          <label for="accountNumber">Account Number:</label>
-          <input type="text" name="accountNumber" required /><br /><br />
-
+          <h3>Account Details 1</h3>
           <label for="accountBranch">Account Branch:</label>
           <input type="text" name="accountBranch" required /><br /><br />
+
+          <label for="accountID">Account ID:</label>
+          <input type="text" name="accountID" required /><br /><br />
+
+          <label for="cycleDetails">Cycle Details:</label>
+          <input type="checkbox" name="monthly" /> Monthly
+          <input type="checkbox" name="daily" /> Daily
+          <input type="checkbox" name="weekly" /> Weekly<br /><br />
+
+          <label for="flag1">Flag 1:</label>
+          <input type="checkbox" name="flag1" /><br /><br />
+
+          <label for="flag2">Flag 2:</label>
+          <input type="checkbox" name="flag2" /><br /><br />
         </div>
       </div>
 
       <button type="button" id="addAccountButton">Add Another Account</button
       ><br /><br />
 
-      <label for="cycleDetails">Cycle Details:</label>
-      <input
-        type="text"
-        id="cycleDetails"
-        name="cycleDetails"
-        required
-      /><br /><br />
-
-      <input type="submit" value="Generate Feature File" />
+      <button type="submit">Generate Feature File</button>
     </form>
-
-    <script src="script.js"></script>
   </body>
 </html>

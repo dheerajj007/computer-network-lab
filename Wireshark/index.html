@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Feature File Generator</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+  <style>
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group input {
+      border: none;
+      border-bottom: 1px solid #ccc;
+      outline: none;
+      padding: 0.5rem 0;
+      width: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container mt-5">
+    <h1>Feature File Generator</h1>
+    <form id="featureForm" action="/generate" method="post">
+      <div id="accountsContainer">
+        <div class="account">
+          <div class="form-group">
+            <input type="text" class="form-control" name="branch[]" placeholder="Branch" required>
+          </div>
+          <div class="form-group">
+            <input type="text" class="form-control" name="accountId[]" placeholder="Account ID" required>
+          </div>
+          <div class="form-group">
+            <select class="form-control" name="cycleFrequency[]" required>
+              <option value="Daily">Daily</option>
+              <option value="Weekly">Weekly</option>
+              <option value="Monthly">Monthly</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <input type="date" class="form-control" name="startDate[]" placeholder="Start Date" required>
+          </div>
+          <div class="form-group">
+            <input type="date" class="form-control" name="endDate[]" placeholder="End Date" required>
+          </div>
+          <div class="tier-container">
+            <div class="tier">
+              <div class="form-group">
+                <input type="number" class="form-control" name="minBalance[]" placeholder="Min Balance" required>
+              </div>
+              <div class="form-group">
+                <input type="number" class="form-control" name="maxBalance[]" placeholder="Max Balance" required>
+              </div>
+              <div class="form-group">
+                <input type="number" class="form-control" name="rate[]" placeholder="Rate" required>
+              </div>
+            </div>
+          </div>
+          <button type="button" class="btn btn-secondary" onclick="addTier(this)">Add Tier</button>
+        </div>
+      </div>
+      <button type="button" class="btn btn-secondary" onclick="addAccount()">Add Account</button>
+      <button type="submit" class="btn btn-primary">Generate Feature File</button>
+    </form>
+  </div>
+
+  <script>
+    function addAccount() {
+      const accountsContainer = document.getElementById("accountsContainer");
+      const account = document.createElement("div");
+      account.className = "account";
+      account.innerHTML = `
+        <div class="form-group">
+          <input type="text" class="form-control" name="branch[]" placeholder="Branch" required>
+        </div>
+        <div class="form-group">
+          <input type="text" class="form-control" name="accountId[]" placeholder="Account ID" required>
+        </div>
+        <div class="form-group">
+          <select class="form-control" name="cycleFrequency[]" required>
+            <option value="Daily">Daily</option>
+            <option value="Weekly">Weekly</option>
+            <option value="Monthly">Monthly</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <input type="date" class="form-control" name="startDate[]" placeholder="Start Date" required>
+        </div>
+        <div class="form-group">
+          <input type="date" class="form-control" name="endDate[]" placeholder="End Date" required>
+        </div>
+        <div class="tier-container">
+          <div class="tier">
+            <div class="form-group">
+              <input type="number" class="form-control" name="minBalance[]" placeholder="Min Balance" required>
+            </div>
+            <div class="form-group">
+              <input type="number" class="form-control" name="maxBalance[]" placeholder="Max Balance" required>
+            </div>
+            <div class="form-group">
+              <input type="number" class="form-control" name="rate[]" placeholder="Rate" required>
+            </div>
+          </div>
+        </div>
+        <button type="button" class="btn btn-secondary" onclick="addTier(this)">Add Tier</button>
+      `;
+      accountsContainer.appendChild(account);
+    }
+
+    function addTier(button) {
+      const tierContainer = button.previousElementSibling;
+      const tier = document.createElement("div");
+      tier.className = "tier";
+      tier.innerHTML = `
+        <div class="form-group">
+          <input type="number" class="form-control" name="minBalance[]" placeholder="Min Balance" required>
+        </div>
+        <div class="form-group">
+          <input type="number" class="form-control" name="maxBalance[]" placeholder="Max Balance" required>
+        </div>
+        <div class="form-group">
+          <input type="number" class="form-control" name="rate[]" placeholder="Rate" required>
+        </div>
+      `;
+      tierContainer.appendChild(tier);
+    }
+  </script>
+</body>
+
+</html>

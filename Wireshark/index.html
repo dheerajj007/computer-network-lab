@@ -1,346 +1,159 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Feature File Generator</title>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 
 <body>
   <div class="container mt-5">
-    <h1>Feature File Generator</h1>
-    <form>
-      <div id="accountsContainer">
-        <hr>
+    <h1 class="text-center mb-5">Feature File Generator</h1>
+
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+        <a class="nav-link active" data-toggle="tab" href="#account">Account</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-toggle="tab" href="#rates">Rates</a>
+      </li>
+    </ul>
+
+    <div class="tab-content mt-3">
+      <div class="tab-pane fade show active" id="account">
         <h3>Account Details</h3>
-        <div class="form-group">
-          <label for="branch">Branch:</label>
-          <input type="text" class="form-control" name="branch[]" required>
-        </div>
-        <div class="form-group">
-          <label for="accountId">Account ID:</label>
-          <input type="text" class="form-control" name="accountId[]" required>
-        </div>
-        <div class="form-group">
-          <label for="cycleFrequency">Cycle Frequency Unit:</label>
-          <select class="form-control" name="cycleFrequencyUnit[]" required>
-            <option value="Day">Day</option>
-            <option value="Week">Week</option>
-            <option value="Month">Month</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="cycleDay">Cycle Day Occurrence:</label>
-          <input type="number" class="form-control" name="cycleDayOccurrence[]" required>
-        </div>
-        <div class="form-group">
-          <label for="fromDate">From EOD Date:</label>
-          <input type="date" class="form-control" name="fromDate[]" required>
-        </div>
-        <div class="form-group">
-          <label for="toDate">To EOD Date:</label>
-          <input type="date" class="form-control" name="toDate[]" required>
-        </div>
-        <div id="balancesContainer">
-          <h4>Balance Details</h4>
+        <div id="account-section">
           <div class="form-group">
-            <label for="startDate">Start Date:</label>
-            <input type="date" class="form-control" name="startDate[0][]" required>
+            <label>Branch:</label>
+            <input type="text" class="form-control" name="branch" required>
           </div>
           <div class="form-group">
-            <label for="endDate">End Date:</label>
-            <input type="date" class="form-control" name="endDate[0][]" required>
+            <label>Account ID:</label>
+            <input type="text" class="form-control" name="accountId" required>
           </div>
-          <div class="form-group">
-            <label for="balance">Balance:</label>
-            <input type="number" step="0.01" class="form-control" name="balance[0][]" required>
-          </div>
+          <!-- Add more account detail fields here -->
         </div>
-        <button type="button" class="btn btn-secondary" onclick="addBalance(0)">Add Balance</button>
-        <hr>
-        <h3>Rates</h3>
-        <div id="ratesContainer">
-          <div class="form-group">
-            <label for="rateStartDate">Rate Start Date:</label>
-            <input type="date" class="form-control" name="rateStartDate[]" required>
-          </div>
-          <div class="form-group">
-            <label for="rateEndDate">Rate End Date:</label>
-            <input type="date" class="form-control" name="rateEndDate[]" required>
-          </div>
-          <div id="tiersContainer">
-            <h4>Tiers</h4>
-            <div class="form-group">
-              <label for="minBalance">Min Balance:</label>
-              <input type="number" step="0.01" class="form-control" name="minBalance[0][]" required>
-            </div>
-            <div class="form-group">
-              <label for="maxBalance">Max Balance:</label>
-              <input type="number" step="0.01" class="form-control" name="maxBalance[0][]" required>
-            </div>
-            <div class="form-group">
-              <label for="rate">Rate:</label>
-              <input type="number" step="0.01" class="form-control" name="rate[0][]" required>
-            </div>
-          </div>
-          <button type="button" class="btn btn-secondary" onclick="addTier(0)">Add Tier</button>
-        </div>
+        <button class="btn btn-primary" onclick="addAccount()">Add Account</button>
+        <button class="btn btn-primary" onclick="nextTab('rates')">Next</button>
       </div>
-      <button type="button" class="btn btn-secondary" onclick="addAccount()">Add Account</button>
-      <button type="button" class="btn btn-primary" onclick="generateFeatureFile()">Generate Feature File</button>
-    </form>
-  </div>
-  <script>
-    function submitForm() {
-      const accounts = document.getElementsByName('branch[]');
-      const accountIds = document.getElementsByName('accountId[]');
-      const cycleFrequencyUnits = document.getElementsByName('cycleFrequencyUnit[]');
-      const cycleDayOccurrences = document.getElementsByName('cycleDayOccurrence[]');
-      const fromDates = document.getElementsByName('fromDate[]');
-      const toDates = document.getElementsByName('toDate[]');
 
-      const featureFileContent = `Feature: Account Details
-
-${generateScenarios(accounts.length, accounts, accountIds, cycleFrequencyUnits, cycleDayOccurrences, fromDates, toDates)}`;
-
-      // Create a Blob object with the feature file content
-      const blob = new Blob([featureFileContent], { type: 'text/plain' });
-
-      // Create a download link
-      const downloadLink = document.createElement('a');
-      downloadLink.href = URL.createObjectURL(blob);
-      downloadLink.download = 'featureFile.feature';
-
-      // Append the download link to the document body and trigger the download
-      document.body.appendChild(downloadLink);
-      downloadLink.click();
-      document.body.removeChild(downloadLink);
-    }
-
-    
-    function addAccount() {
-      const accountsContainer = document.getElementById('accountsContainer');
-
-      const accountSection = document.createElement('div');
-      accountSection.innerHTML = `
-        <hr>
-        <h3>Account Details</h3>
-        <div class="form-group">
-          <label for="branch">Branch:</label>
-          <input type="text" class="form-control" name="branch[]" required>
-        </div>
-        <div class="form-group">
-          <label for="accountId">Account ID:</label>
-          <input type="text" class="form-control" name="accountId[]" required>
-        </div>
-        <div class="form-group">
-          <label for="cycleFrequency">Cycle Frequency Unit:</label>
-          <select class="form-control" name="cycleFrequencyUnit[]" required>
-            <option value="Day">Day</option>
-            <option value="Week">Week</option>
-            <option value="Month">Month</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="cycleDay">Cycle Day Occurrence:</label>
-          <input type="number" class="form-control" name="cycleDayOccurrence[]" required>
-        </div>
-        <div class="form-group">
-          <label for="fromDate">From EOD Date:</label>
-          <input type="date" class="form-control" name="fromDate[]" required>
-        </div>
-        <div class="form-group">
-          <label for="toDate">To EOD Date:</label>
-          <input type="date" class="form-control" name="toDate[]" required>
-        </div>
-        <div id="balancesContainer">
-          <h4>Balance Details</h4>
-          <div class="form-group">
-            <label for="startDate">Start Date:</label>
-            <input type="date" class="form-control" name="startDate[]" required>
-          </div>
-          <div class="form-group">
-            <label for="endDate">End Date:</label>
-            <input type="date" class="form-control" name="endDate[]" required>
-          </div>
-          <div class="form-group">
-            <label for="balance">Balance:</label>
-            <input type="number" step="0.01" class="form-control" name="balance[]" required>
-          </div>
-        </div>
-        <button type="button" class="btn btn-secondary" onclick="addBalance(${accountsContainer.children.length})">Add Balance</button>
-        <hr>
+      <div class="tab-pane fade" id="rates">
         <h3>Rates</h3>
-        <div id="ratesContainer">
+        <div id="rate-section">
           <div class="form-group">
-            <label for="rateStartDate">Rate Start Date:</label>
-            <input type="date" class="form-control" name="rateStartDate[]" required>
+            <label>Start Date:</label>
+            <input type="date" class="form-control" name="rateStartDate" required>
           </div>
           <div class="form-group">
-            <label for="rateEndDate">Rate End Date:</label>
-            <input type="date" class="form-control" name="rateEndDate[]" required>
+            <label>End Date:</label>
+            <input type="date" class="form-control" name="rateEndDate" required>
           </div>
-          <div id="tiersContainer">
-            <h4>Tiers</h4>
-            <div class="form-group">
-              <label for="minBalance">Min Balance:</label>
-              <input type="number" step="0.01" class="form-control" name="minBalance[][]" required>
-            </div>
-            <div class="form-group">
-              <label for="maxBalance">Max Balance:</label>
-              <input type="number" step="0.01" class="form-control" name="maxBalance[][]" required>
-            </div>
-            <div class="form-group">
-              <label for="rate">Rate:</label>
-              <input type="number" step="0.01" class="form-control" name="rate[][]" required>
-            </div>
-          </div>
-          <button type="button" class="btn btn-secondary" onclick="addTier(${accountsContainer.children.length})">Add Tier</button>
+          <!-- Add more rate detail fields here -->
         </div>
-      `;
+        <button class="btn btn-primary" onclick="addRate()">Add Rate</button>
+        <button class="btn btn-primary" onclick="generateFeatureFile()">Generate Feature File</button>
+      </div>
+    </div>
+  </div>
 
-      accountsContainer.appendChild(accountSection);
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script>
+    let accounts = [];
+    let rates = [];
+
+    function addAccount() {
+      const accountSection = document.getElementById('account-section');
+
+      const accountDiv = document.createElement('div');
+      accountDiv.classList.add('account-detail');
+
+      const branchInput = createInput('text', 'branch', 'Branch', true);
+      const accountIdInput = createInput('text', 'accountId', 'Account ID', true);
+      // Add more account detail fields here
+
+      accountDiv.appendChild(branchInput);
+      accountDiv.appendChild(accountIdInput);
+      // Append more account detail fields here
+
+      accountSection.appendChild(accountDiv);
     }
 
-    function addBalance(accountIndex) {
-      const balancesContainer = document.getElementById('balancesContainer');
+    function addRate() {
+      const rateSection = document.getElementById('rate-section');
 
-      const balanceSection = document.createElement('div');
-      balanceSection.innerHTML = `
-        <hr>
-        <h4>Balance Details</h4>
-        <div class="form-group">
-          <label for="startDate">Start Date:</label>
-          <input type="date" class="form-control" name="startDate[${accountIndex}][]" required>
-        </div>
-        <div class="form-group">
-          <label for="endDate">End Date:</label>
-          <input type="date" class="form-control" name="endDate[${accountIndex}][]" required>
-        </div>
-        <div class="form-group">
-          <label for="balance">Balance:</label>
-          <input type="number" step="0.01" class="form-control" name="balance[${accountIndex}][]" required>
-        </div>
-      `;
+      const rateDiv = document.createElement('div');
+      rateDiv.classList.add('rate-detail');
 
-      balancesContainer.appendChild(balanceSection);
+      const rateStartDateInput = createInput('date', 'rateStartDate', 'Start Date', true);
+      const rateEndDateInput = createInput('date', 'rateEndDate', 'End Date', true);
+      // Add more rate detail fields here
+
+      rateDiv.appendChild(rateStartDateInput);
+      rateDiv.appendChild(rateEndDateInput);
+      // Append more rate detail fields here
+
+      rateSection.appendChild(rateDiv);
     }
 
-    function addTier(accountIndex) {
-      const tiersContainer = document.getElementById('tiersContainer');
+    function createInput(type, name, label, required) {
+      const inputDiv = document.createElement('div');
+      inputDiv.classList.add('form-group');
 
-      const tierSection = document.createElement('div');
-      tierSection.innerHTML = `
-        <hr>
-        <h4>Tiers</h4>
-        <div class="form-group">
-          <label for="minBalance">Min Balance:</label>
-          <input type="number" step="0.01" class="form-control" name="minBalance[${accountIndex}][]" required>
-        </div>
-        <div class="form-group">
-          <label for="maxBalance">Max Balance:</label>
-          <input type="number" step="0.01" class="form-control" name="maxBalance[${accountIndex}][]" required>
-        </div>
-        <div class="form-group">
-          <label for="rate">Rate:</label>
-          <input type="number" step="0.01" class="form-control" name="rate[${accountIndex}][]" required>
-        </div>
-      `;
+      const inputLabel = document.createElement('label');
+      inputLabel.textContent = label;
 
-      tiersContainer.appendChild(tierSection);
+      const input = document.createElement('input');
+      input.type = type;
+      input.name = name;
+      if (required) {
+        input.required = true;
+      }
+      input.classList.add('form-control');
+
+      inputDiv.appendChild(inputLabel);
+      inputDiv.appendChild(input);
+
+      return inputDiv;
+    }
+
+    function nextTab(tabId) {
+      $('.nav-tabs a[href="#' + tabId + '"]').tab('show');
     }
 
     function generateFeatureFile() {
-      const accounts = document.getElementsByName('branch[]');
-      const accountIds = document.getElementsByName('accountId[]');
-      const cycleFrequencyUnits = document.getElementsByName('cycleFrequencyUnit[]');
-      const cycleDayOccurrences = document.getElementsByName('cycleDayOccurrence[]');
-      const fromDates = document.getElementsByName('fromDate[]');
-      const toDates = document.getElementsByName('toDate[]');
+      // Retrieve account details
+      const accountDetails = Array.from(document.querySelectorAll('.account-detail')).map((account) => {
+        const branch = account.querySelector('[name="branch"]').value;
+        const accountId = account.querySelector('[name="accountId"]').value;
+        // Get more account detail fields here
 
-      const featureFileContent = `Feature: Account Details
+        return {
+          branch,
+          accountId,
+          // Add more account detail fields here
+        };
+      });
 
-${generateScenarios(accounts.length, accounts, accountIds, cycleFrequencyUnits, cycleDayOccurrences, fromDates, toDates)}`;
+      // Retrieve rate details
+      const rateDetails = Array.from(document.querySelectorAll('.rate-detail')).map((rate) => {
+        const rateStartDate = rate.querySelector('[name="rateStartDate"]').value;
+        const rateEndDate = rate.querySelector('[name="rateEndDate"]').value;
+        // Get more rate detail fields here
 
-      console.log(featureFileContent);
+        return {
+          rateStartDate,
+          rateEndDate,
+          // Add more rate detail fields here
+        };
+      });
 
-      // You can use the generated featureFileContent as needed (e.g., download as a file, send to server, etc.)
-    }
-
-    function generateScenarios(accountCount, accounts, accountIds, cycleFrequencyUnits, cycleDayOccurrences, fromDates, toDates) {
-      let scenarioContent = '';
-
-      for (let i = 0; i < accountCount; i++) {
-        scenarioContent += `Scenario: Account ${i + 1}
-  Given the account details
-    | Branch              | ${accounts[i].value}            |
-    | Account ID          | ${accountIds[i].value}          |
-    | Cycle Frequency Unit| ${cycleFrequencyUnits[i].value} |
-    | Cycle Day Occurrence| ${cycleDayOccurrences[i].value}  |
-    | From EOD Date       | ${fromDates[i].value}            |
-    | To EOD Date         | ${toDates[i].value}              |
-${generateBalances(i)}
-${generateRates(i)}
-\n`;
-      }
-
-      return scenarioContent;
-    }
-
-    function generateBalances(accountIndex) {
-      const startDates = document.getElementsByName(`startDate[${accountIndex}][]`);
-      const endDates = document.getElementsByName(`endDate[${accountIndex}][]`);
-      const balances = document.getElementsByName(`balance[${accountIndex}][]`);
-
-      let balancesContent = '';
-
-      for (let i = 0; i < startDates.length; i++) {
-        balancesContent += `  And the balance details
-    | Start Date | ${startDates[i].value} |
-    | End Date   | ${endDates[i].value}   |
-    | Balance    | ${balances[i].value}   |
-`;
-      }
-
-      return balancesContent;
-    }
-
-    function generateRates(accountIndex) {
-      const rateStartDates = document.getElementsByName('rateStartDate[]');
-      const rateEndDates = document.getElementsByName('rateEndDate[]');
-      const minBalances = document.getElementsByName(`minBalance[${accountIndex}][]`);
-      const maxBalances = document.getElementsByName(`maxBalance[${accountIndex}][]`);
-      const rates = document.getElementsByName(`rate[${accountIndex}][]`);
-
-      let ratesContent = '';
-
-      for (let i = 0; i < rateStartDates.length; i++) {
-        ratesContent += `  And the rate details
-    | Rate Start Date | ${rateStartDates[i].value} |
-    | Rate End Date   | ${rateEndDates[i].value}   |
-${generateTiers(accountIndex, i)}
-`;
-      }
-
-      return ratesContent;
-    }
-
-    function generateTiers(accountIndex, rateIndex) {
-      const minBalances = document.getElementsByName(`minBalance[${accountIndex}][]`);
-      const maxBalances = document.getElementsByName(`maxBalance[${accountIndex}][]`);
-      const rates = document.getElementsByName(`rate[${accountIndex}][]`);
-
-      let tiersContent = '';
-
-      for (let i = 0; i < minBalances.length; i++) {
-        tiersContent += `    | Min Balance | ${minBalances[i].value} |
-    | Max Balance | ${maxBalances[i].value} |
-    | Rate        | ${rates[i].value}       |
-`;
-      }
-
-      return tiersContent;
+      // Generate feature file using accountDetails and rateDetails
+      console.log('Account Details:', accountDetails);
+      console.log('Rate Details:', rateDetails);
     }
   </script>
 </body>

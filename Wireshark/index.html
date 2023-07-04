@@ -31,6 +31,7 @@
 
   <script>
     var accountCounter = 1; // Counter for dynamically generated account fields
+    addAccount();
 
     function addAccount() {
       var accountDiv = document.createElement('div');
@@ -75,9 +76,13 @@
       rateDiv.innerHTML = rateFieldsHtml;
 
       document.getElementById('account' + accountId).appendChild(rateDiv);
+      addTier(accountId, (document.querySelectorAll('.rate-group').length) - 1)
+
     }
 
     function addTier(accountId, rateIndex) {
+
+
       var tierDiv = document.createElement('div');
       tierDiv.className = 'tier-group';
 
@@ -95,7 +100,6 @@
 
     document.getElementById('accountForm').addEventListener('submit', function (e) {
       e.preventDefault(); // Prevent form submission
-
       var accounts = [];
 
       for (var i = 1; i < accountCounter; i++) {

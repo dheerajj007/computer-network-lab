@@ -1,75 +1,134 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Feature File Generator</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <title>Add Accounts</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  <style>
+    .rate-group {
+      margin-bottom: 10px;
+    }
+
+    .tier-group {
+      margin-left: 20px;
+    }
+  </style>
 </head>
 
 <body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">Feature File Generator</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link" id="account-tab" href="#account-section">Account Details</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" id="rates-tab" href="#rates-section">Rates</a>
-        </li>
-      </ul>
-    </div>
-  </nav>
+  <div class="container">
+    <h1>Add Accounts</h1>
+    <form id="accountForm">
+      <div id="accountFields"></div>
 
-  <div class="container mt-5">
-    <div class="tab-content">
-      <div class="tab-pane fade" id="account-section">
-        <h3>Account Details</h3>
-        <!-- Account details form goes here -->
-        <button class="btn btn-primary mt-3" id="next-btn">Next</button>
+      <div class="form-group">
+        <button type="button" class="btn btn-primary" onclick="addAccount()">Add Account</button>
       </div>
-      <div class="tab-pane fade" id="rates-section">
-        <h3>Rates</h3>
-        <!-- Rates details form goes here -->
-        <button class="btn btn-primary mt-3" id="generate-btn">Generate Feature File</button>
-      </div>
-    </div>
+
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
   </div>
 
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script>
-    $(document).ready(function () {
-      $('#account-tab').on('click', function () {
-        $('.nav-link').removeClass('active');
-        $(this).addClass('active');
-        $('.tab-pane').removeClass('show active');
-        $('#account-section').addClass('show active');
-      });
+    var accountCounter = 1; // Counter for dynamically generated account fields
 
-      $('#rates-tab').on('click', function () {
-        $('.nav-link').removeClass('active');
-        $(this).addClass('active');
-        $('.tab-pane').removeClass('show active');
-        $('#rates-section').addClass('show active');
-      });
+    function addAccount() {
+      var accountDiv = document.createElement('div');
+      accountDiv.id = 'account' + accountCounter;
 
-      $('#next-btn').on('click', function () {
-        $('#account-tab').removeClass('active');
-        $('#account-section').removeClass('show active');
-        $('#rates-tab').addClass('active');
-        $('#rates-section').addClass('show active');
-      });
+      var accountFieldsHtml = `
+        <hr>
+        <h4>Account ${accountCounter}</h4>
+        <div class="form-group">
+          <label for="accountId${accountCounter}">Account ID:</label>
+          <input type="text" class="form-control" id="accountId${accountCounter}" required>
+        </div>
+        <div class="form-group">
+          <button type="button" class="btn btn-primary" onclick="addRate(${accountCounter})">Add Rate</button>
+        </div>
+      `;
 
-      $('#generate-btn').on('click', function () {
-        // Code to generate the feature file
-      });
+      accountDiv.innerHTML = accountFieldsHtml;
+
+      document.getElementById('accountFields').appendChild(accountDiv);
+
+      addRate(accountCounter); // Add the first rate field for the newly added account
+
+      accountCounter++;
+    }
+
+    function addRate(accountId) {
+      var rateDiv = document.createElement('div');
+      rateDiv.className = 'rate-group';
+
+      var rateFieldsHtml = `
+        <div class="form-group">
+          <label for="rateDate${accountId}">Rate Date:</label>
+          <input type="text" class="form-control" id="rateDate${accountId}" required>
+        </div>
+        <div class="form-group">
+          <button type="button" class="btn btn-primary" onclick="addTier(${accountId}, ${document.querySelectorAll('.rate-group').length})">Add Tier</button>
+        </div>
+        <div id="tierFields${accountId}-${document.querySelectorAll('.rate-group').length}"></div>
+      `;
+
+      rateDiv.innerHTML = rateFieldsHtml;
+
+      document.getElementById('account' + accountId).appendChild(rateDiv);
+    }
+
+    function addTier(accountId, rateIndex) {
+      var tierDiv = document.createElement('div');
+      tierDiv.className = 'tier-group';
+
+      var tierFieldsHtml = `
+        <div class="form-group">
+          <label for="tierPrice${accountId}-${rateIndex}">Tier Price:</label>
+          <input type="number" step="0.01" class="form-control" id="tierPrice${accountId}-${rateIndex}" required>
+        </div>
+      `;
+
+      tierDiv.innerHTML = tierFieldsHtml;
+
+      document.getElementById('tierFields' + accountId + '-' + rateIndex).appendChild(tierDiv);
+    }
+
+    document.getElementById('accountForm').addEventListener('submit', function (e) {
+      e.preventDefault(); // Prevent form submission
+
+      var accounts = [];
+
+      for (var i = 1; i < accountCounter; i++) {
+        var accountId = document.getElementById('accountId' + i).value;
+
+        var rates = [];
+        var rateDivs = document.querySelectorAll('#account' + i + ' .rate-group');
+        rateDivs.forEach(function (rateDiv, rateIndex) {
+          var rateDate = rateDiv.querySelector('input[type="text"]').value;
+
+          var tiers = [];
+          var tierDivs = rateDiv.querySelectorAll('.tier-group');
+          tierDivs.forEach(function (tierDiv) {
+            var tierPrice = parseFloat(tierDiv.querySelector('input[type="number"]').value);
+
+            tiers.push({
+              price: tierPrice
+            });
+          });
+
+          rates.push({
+            date: rateDate,
+            tiers: tiers
+          });
+        });
+
+        accounts.push({
+          id: accountId,
+          rates: rates
+        });
+      }
+
+      console.log(accounts);
     });
   </script>
 </body>

@@ -6,6 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Account Details</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .close-tab {
+            display: none;
+            margin-left: 5px;
+            color: red;
+        }
+
+        .nav-link:hover .close-tab {
+            display: inline-block;
+        }
+    </style>
 </head>
 
 <body>
@@ -14,6 +25,9 @@
         <ul class="nav nav-tabs" id="accountTabs">
             <li class="nav-item">
                 <a class="nav-link active" data-toggle="tab" href="#account1">Account 1</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" onclick="deleteAccount()">-</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#" onclick="addAccount()">+</a>
@@ -49,9 +63,17 @@
             const newTab = document.createElement('li');
             newTab.classList.add('nav-item');
             newTab.innerHTML = `
-        <a class="nav-link" data-toggle="tab" href="#account${accountCount}">Account ${accountCount}</a>
-      `;
-            accountTabs.insertBefore(newTab, accountTabs.lastChild);
+    <a class="nav-link" data-toggle="tab" href="#account${accountCount}">
+        <span class="account-name">Account ${accountCount}</span>
+        ${accountCount > 1 ? '<button type="button" class="close close-tab" aria-label="Close" onclick="deleteAccount()">&times;</button>' : ''}
+    </a>
+  `;
+            accountTabs.insertBefore(newTab, accountTabs.lastChild.previousElementSibling);
+            // Move the delete button to the last position in the account tab
+            if (accountCount > 1) {
+                const deleteButton = newTab.querySelector('.close-tab');
+                newTab.appendChild(deleteButton);
+            }
 
             // Create a new account tab-pane
             const accountTabContent = document.getElementById('accountTabContent');
@@ -59,22 +81,38 @@
             newTabPane.classList.add('tab-pane', 'fade');
             newTabPane.id = `account${accountCount}`;
             newTabPane.innerHTML = `
-        <h3>Account ${accountCount} Details</h3>
-        <div class="form-group">
-          <label for="branch${accountCount}">Branch</label>
-          <input type="text" class="form-control" id="branch${accountCount}" required>
-        </div>
-        <div class="form-group">
-          <label for="accountId${accountCount}">Account ID</label>
-          <input type="text" class="form-control" id="accountId${accountCount}" required>
-        </div>
-        <!-- Add more account detail fields here -->
-      `;
+    <h3>Account ${accountCount} Details</h3>
+    <div class="form-group">
+      <label for="branch${accountCount}">Branch</label>
+      <input type="text" class="form-control" id="branch${accountCount}" required>
+    </div>
+    <div class="form-group">
+      <label for="accountId${accountCount}">Account ID</label>
+      <input type="text" class="form-control" id="accountId${accountCount}" required>
+    </div>
+    <!-- Add more account detail fields here -->
+  `;
             accountTabContent.appendChild(newTabPane);
 
             // Switch to the newly added account tab
             const newTabLink = newTab.querySelector('a');
             newTabLink.click();
+        }
+
+        function deleteAccount() {
+            const accountTabs = document.getElementById('accountTabs');
+            const accountTabLinks = document.querySelectorAll('#accountTabs .nav-link');
+
+            if (accountTabLinks.length > 1) {
+                const lastAccountTabLink = accountTabLinks[accountTabLinks.length - 1];
+                const lastAccountTab = document.querySelector(lastAccountTabLink.getAttribute('href'));
+
+                lastAccountTabLink.parentNode.remove();
+                lastAccountTab.remove();
+
+                // Update the accountCount when deleting the last account
+                accountCount--;
+            }
         }
     </script>
 </body>

@@ -1,139 +1,131 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-  <title>Add Accounts</title>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account Details</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <style>
-    .rate-group {
-      margin-bottom: 10px;
+    .close-tab {
+      display: none;
+      margin-left: 5px;
+      color: red;
     }
 
-    .tier-group {
-      margin-left: 20px;
+    .nav-link:hover .close-tab {
+      display: inline-block;
     }
   </style>
 </head>
 
 <body>
-  <div class="container">
-    <h1>Add Accounts</h1>
-    <form id="accountForm">
-      <div id="accountFields"></div>
+  <div class="container mt-5">
+    <h1>Account Details</h1>
+    <ul class="nav nav-tabs" id="accountTabs">
+      <li class="nav-item">
+        <a class="nav-link active" data-toggle="tab" href="#account1">Account 1</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#" onclick="deleteAccount()">-</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#" onclick="addAccount()">+</a>
+      </li>
+    </ul>
 
-      <div class="form-group">
-        <button type="button" class="btn btn-primary" onclick="addAccount()">Add Account</button>
+    <div class="tab-content mt-3" id="accountTabContent">
+      <div class="tab-pane fade show active" id="account1">
+        <h3>Account 1 Details</h3>
+        <div class="form-group">
+          <label for="branch1">Branch</label>
+          <input type="text" class="form-control" id="branch1" required>
+        </div>
+        <div class="form-group">
+          <label for="accountId1">Account ID</label>
+          <input type="text" class="form-control" id="accountId1" required>
+        </div>
+        <div class="form-group">
+          <label for="date1">Date</label>
+          <input type="date" class="form-control" id="date1" required>
+        </div>
       </div>
-
-      <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
+    </div>
   </div>
 
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>
   <script>
-    var accountCounter = 1; // Counter for dynamically generated account fields
-    addAccount();
+    let accountCount = 1;
 
     function addAccount() {
-      var accountDiv = document.createElement('div');
-      accountDiv.id = 'account' + accountCounter;
+      accountCount++;
 
-      var accountFieldsHtml = `
-        <hr>
-        <h4>Account ${accountCounter}</h4>
+      // Get the details from Account 1
+      const account1Branch = document.getElementById('branch1').value;
+      const account1Id = document.getElementById('accountId1').value;
+      const account1Date = document.getElementById('date1').value;
+
+      // Create a new account tab
+      const accountTabs = document.getElementById('accountTabs');
+      const newTab = document.createElement('li');
+      newTab.classList.add('nav-item');
+      newTab.innerHTML = `
+        <a class="nav-link" data-toggle="tab" href="#account${accountCount}">
+            <span class="account-name">Account ${accountCount}</span>
+            ${accountCount > 1 ? '<button type="button" class="close close-tab" aria-label="Close" onclick="deleteAccount()">&times;</button>' : ''}
+        </a>
+      `;
+      accountTabs.insertBefore(newTab, accountTabs.lastChild.previousElementSibling);
+
+      // Create a new account tab-pane
+      const accountTabContent = document.getElementById('accountTabContent');
+      const newTabPane = document.createElement('div');
+      newTabPane.classList.add('tab-pane', 'fade');
+      newTabPane.id = `account${accountCount}`;
+      newTabPane.innerHTML = `
+        <h3>Account ${accountCount} Details</h3>
         <div class="form-group">
-          <label for="accountId${accountCounter}">Account ID:</label>
-          <input type="text" class="form-control" id="accountId${accountCounter}" required>
+          <label for="branch${accountCount}">Branch</label>
+          <input type="text" class="form-control" id="branch${accountCount}" required value="${account1Branch}">
         </div>
         <div class="form-group">
-          <button type="button" class="btn btn-primary" onclick="addRate(${accountCounter})">Add Rate</button>
+          <label for="accountId${accountCount}">Account ID</label>
+          <input type="text" class="form-control" id="accountId${accountCount}" required value="${account1Id}">
+        </div>
+        <div class="form-group">
+          <label for="date${accountCount}">Date</label>
+          <input type="date" class="form-control" id="date${accountCount}" required value="${account1Date}">
         </div>
       `;
+      accountTabContent.appendChild(newTabPane);
 
-      accountDiv.innerHTML = accountFieldsHtml;
-
-      document.getElementById('accountFields').appendChild(accountDiv);
-
-      addRate(accountCounter); // Add the first rate field for the newly added account
-
-      accountCounter++;
-    }
-
-    function addRate(accountId) {
-      var rateDiv = document.createElement('div');
-      rateDiv.className = 'rate-group';
-
-      var rateFieldsHtml = `
-        <div class="form-group">
-          <label for="rateDate${accountId}">Rate Date:</label>
-          <input type="text" class="form-control" id="rateDate${accountId}" required>
-        </div>
-        <div class="form-group">
-          <button type="button" class="btn btn-primary" onclick="addTier(${accountId}, ${document.querySelectorAll('.rate-group').length})">Add Tier</button>
-        </div>
-        <div id="tierFields${accountId}-${document.querySelectorAll('.rate-group').length}"></div>
-      `;
-
-      rateDiv.innerHTML = rateFieldsHtml;
-
-      document.getElementById('account' + accountId).appendChild(rateDiv);
-      addTier(accountId, (document.querySelectorAll('.rate-group').length) - 1)
-
-    }
-
-    function addTier(accountId, rateIndex) {
-
-
-      var tierDiv = document.createElement('div');
-      tierDiv.className = 'tier-group';
-
-      var tierFieldsHtml = `
-        <div class="form-group">
-          <label for="tierPrice${accountId}-${rateIndex}">Tier Price:</label>
-          <input type="number" step="0.01" class="form-control" id="tierPrice${accountId}-${rateIndex}" required>
-        </div>
-      `;
-
-      tierDiv.innerHTML = tierFieldsHtml;
-
-      document.getElementById('tierFields' + accountId + '-' + rateIndex).appendChild(tierDiv);
-    }
-
-    document.getElementById('accountForm').addEventListener('submit', function (e) {
-      e.preventDefault(); // Prevent form submission
-      var accounts = [];
-
-      for (var i = 1; i < accountCounter; i++) {
-        var accountId = document.getElementById('accountId' + i).value;
-
-        var rates = [];
-        var rateDivs = document.querySelectorAll('#account' + i + ' .rate-group');
-        rateDivs.forEach(function (rateDiv, rateIndex) {
-          var rateDate = rateDiv.querySelector('input[type="text"]').value;
-
-          var tiers = [];
-          var tierDivs = rateDiv.querySelectorAll('.tier-group');
-          tierDivs.forEach(function (tierDiv) {
-            var tierPrice = parseFloat(tierDiv.querySelector('input[type="number"]').value);
-
-            tiers.push({
-              price: tierPrice
-            });
-          });
-
-          rates.push({
-            date: rateDate,
-            tiers: tiers
-          });
-        });
-
-        accounts.push({
-          id: accountId,
-          rates: rates
-        });
+      // Move the delete button to the last position in the account tab
+      if (accountCount > 1) {
+        const deleteButton = newTab.querySelector('.close-tab');
+        newTab.appendChild(deleteButton);
       }
 
-      console.log(accounts);
-    });
+      // Switch to the newly added account tab
+      const newTabLink = newTab.querySelector('a');
+      newTabLink.click();
+    }
+
+    function deleteAccount() {
+      const accountTabs = document.getElementById('accountTabs');
+      const accountTabLinks = document.querySelectorAll('#accountTabs .nav-link');
+
+      if (accountTabLinks.length > 2) {
+        const lastAccountTabLink = accountTabLinks[accountTabLinks.length - 2];
+        const lastAccountTab = document.querySelector(lastAccountTabLink.getAttribute('href'));
+
+        lastAccountTabLink.parentNode.remove();
+        lastAccountTab.remove();
+
+        // Update the accountCount when deleting the last account
+        accountCount--;
+      }
+    }
   </script>
 </body>
 

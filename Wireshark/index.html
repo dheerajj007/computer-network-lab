@@ -46,8 +46,13 @@
           <input type="text" class="form-control" id="accountId1" required>
         </div>
         <div class="form-group">
-          <label for="date1">Date</label>
-          <input type="date" class="form-control" id="date1" required>
+          <label for="loginDate1">Login Date</label>
+          <input type="date" class="form-control" id="loginDate1" required
+            onchange="setBusinessDate('loginDate1', 'businessDate1')">
+        </div>
+        <div class="form-group">
+          <label for="businessDate1">Business Date</label>
+          <input type="date" class="form-control" id="businessDate1" required>
         </div>
       </div>
     </div>
@@ -64,7 +69,8 @@
       // Get the details from Account 1
       const account1Branch = document.getElementById('branch1').value;
       const account1Id = document.getElementById('accountId1').value;
-      const account1Date = document.getElementById('date1').value;
+      const account1LoginDate = document.getElementById('loginDate1').value;
+      const account1BusinessDate = document.getElementById('businessDate1').value;
 
       // Create a new account tab
       const accountTabs = document.getElementById('accountTabs');
@@ -94,8 +100,12 @@
           <input type="text" class="form-control" id="accountId${accountCount}" required value="${account1Id}">
         </div>
         <div class="form-group">
-          <label for="date${accountCount}">Date</label>
-          <input type="date" class="form-control" id="date${accountCount}" required value="${account1Date}">
+          <label for="loginDate${accountCount}">Login Date</label>
+          <input type="date" class="form-control" id="loginDate${accountCount}" required onchange="setBusinessDate('loginDate${accountCount}', 'businessDate${accountCount}')">
+        </div>
+        <div class="form-group">
+          <label for="businessDate${accountCount}">Business Date</label>
+          <input type="date" class="form-control" id="businessDate${accountCount}" required value="${account1BusinessDate}">
         </div>
       `;
       accountTabContent.appendChild(newTabPane);
@@ -125,6 +135,11 @@
         // Update the accountCount when deleting the last account
         accountCount--;
       }
+    }
+
+    function setBusinessDate(loginDateId, businessDateId) {
+      const loginDate = document.getElementById(loginDateId).value;
+      document.getElementById(businessDateId).value = loginDate;
     }
   </script>
 </body>
